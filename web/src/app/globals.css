@@ -1,0 +1,314 @@
+/* Ported from the original site's index.css + App.css, plus the per-page
+   <style> blocks that MuiMarkdown injected on the about/project pages. */
+
+@font-face {
+  font-family: 'Coolvetica';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: local('Coolvetica'), url('/fonts/CoolveticaEl-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DeAetna';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: local('DeAetna'), url('/fonts/DeAetna-Subhead.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Folio Book';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: local('Folio'), url('/fonts/Folio-Book-BT.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: local('Noto Sans'), url('/fonts/Noto-Sans-regular.woff2') format('woff2');
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+body {
+  margin: 0;
+  font-family: 'Coolvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  color: inherit !important;
+  opacity: 0.8;
+}
+
+a:hover {
+  opacity: 1;
+}
+
+h3 > a {
+  text-decoration-thickness: 2.5px !important;
+}
+
+/* Route transition fade (replaces react-transition-group) */
+.route-fade {
+  animation: route-fade-in 300ms ease both;
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Ensure all card wrapper classes have height: 100% for equal card heights */
+.MuiPaper-root,
+.MuiCardActionArea-root,
+.MuiCard-root {
+  height: 100% !important;
+  border-radius: 0 !important;
+}
+
+/* Button base components should have rounded corners */
+.MuiButtonBase-root {
+  border-radius: 50% !important;
+}
+
+/* Ensure CardContent uses flexbox for proper layout */
+.MuiCardContent-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 0 !important;
+}
+
+/* Allow border-radius on Switch components */
+.MuiSwitch-root {
+  border-radius: 100px !important;
+}
+
+.MuiSwitch-track {
+  border-radius: 10px !important;
+}
+
+.MuiSwitch-thumb {
+  border-radius: 50% !important;
+}
+
+.MuiSwitch-thumb:before {
+  border-radius: 50% !important;
+}
+
+/* Ensure Grid items stretch to full height */
+.MuiGrid-item {
+  display: flex;
+}
+
+.MuiGrid-item > * {
+  width: 100%;
+}
+
+.App {
+  text-align: center;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+/* ---------------------------------------------------------------- */
+/* Project pages (originally per-page <style> blocks in MuiMarkdown) */
+/* ---------------------------------------------------------------- */
+
+.project-page h3 {
+  margin: 5vh 5vw !important;
+}
+
+.project-page h4 {
+  margin: 5vh 8vw !important;
+}
+
+.project-page h6 {
+  margin: 0vh 8vw !important;
+  text-align: left;
+}
+
+.project-page p {
+  margin: 2vh 8vw;
+  text-align: left;
+}
+
+.project-page ol {
+  margin: 4vh 8vw;
+  text-align: left;
+}
+
+.project-page ul {
+  margin: 2vh 5vw;
+  text-align: left;
+}
+
+.project-page li {
+  margin-top: 8px;
+}
+
+.project-page img {
+  object-fit: contain;
+  max-width: 100vw;
+  max-height: 50vh;
+}
+
+.project-page img.size-large {
+  max-height: 70vh;
+}
+
+.project-page img.size-wide {
+  width: 100%;
+  max-height: 75vh;
+}
+
+.project-page video {
+  object-fit: contain;
+  max-width: 100vw;
+  max-height: 76vh;
+}
+
+.project-page figure {
+  display: flex;
+  flex-direction: column;
+  margin: 5vh auto;
+  align-items: center;
+  max-width: 100vw;
+}
+
+.project-page figcaption {
+  margin-top: 2vh;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.project-page .image-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 0 2vw;
+  max-width: 100vw;
+  min-width: 0;
+  justify-content: center;
+}
+
+.project-page .image-row img {
+  min-width: 0;
+  min-height: 0;
+  flex-shrink: 1;
+  max-width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .project-page img {
+    max-height: 90vh;
+  }
+
+  .project-page .image-row > div {
+    width: 50%;
+    border-right: 0.5px solid black;
+    border-left: 0.5px solid black;
+  }
+}
+
+/* ------------------------------------------------------- */
+/* About page (originally a <style> block in MuiMarkdown)   */
+/* ------------------------------------------------------- */
+
+.about-page h3 {
+  text-align: left;
+  margin: 5vh 8vw 0 !important;
+}
+
+.about-page h4 {
+  text-align: left;
+  margin: 5vh 8vw !important;
+}
+
+.about-page img {
+  margin-left: 8vw;
+  object-fit: contain;
+  max-width: 100vw;
+  max-height: 50vh;
+}
+
+.about-page p {
+  margin: 0vh 8vw 2vh;
+  text-align: left;
+}
+
+.about-page ul {
+  margin: 0vh 8vw 2vh;
+  text-align: left;
+}
+
+.about-page #container {
+  display: flex;
+  flex-direction: row;
+}
+
+@media only screen and (max-width: 950px) {
+  .about-page #container {
+    flex-direction: column;
+    align-items: start;
+  }
+  .about-page img {
+    width: 86vw;
+    margin: 5vh 8vw !important;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .about-page h3 {
+    margin: 2vh 5vw 0 !important;
+  }
+  .about-page h4 {
+    margin: 2vh 5vw !important;
+  }
+  .about-page img {
+    width: 90vw;
+    margin: 5vh 5vw !important;
+  }
+}
+
+/* ------------------------------------------------------- */
+/* Contact page                                             */
+/* ------------------------------------------------------- */
+
+#contact-heading {
+  text-align: left;
+  margin: 2vh 5vw;
+}
+
+.contact-icons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+@media only screen and (max-width: 600px) {
+  #contact-heading {
+    display: none;
+  }
+  .contact-icons {
+    flex-direction: column;
+  }
+}

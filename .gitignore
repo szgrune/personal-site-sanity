@@ -1,0 +1,18 @@
+node_modules
+.DS_Store
+
+# env files with tokens
+.env
+.env.*
+!.env.example
+
+# build output
+web/.next/
+web/out/
+studio/dist/
+
+# vercel
+.vercel
+
+# sanity
+studio/.sanity/
