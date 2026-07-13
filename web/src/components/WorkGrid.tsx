@@ -351,16 +351,23 @@ export default function WorkGrid({
 }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Pills: base categories from the CMS first, then any extra tags found on
-  // projects — so entering a brand new tag on a project creates a new pill.
+  // Pills: only tags that at least one project actually has, ordered by the
+  // CMS base-category list first, then any extra tags in project order — so
+  // entering a brand new tag on a project creates a new pill.
   const allTags = useMemo(() => {
-    const tags = [...(categories ?? [])];
+    const usedTags = new Set<string>();
     for (const project of projects) {
       for (const tag of project.tags ?? []) {
-        if (!tags.includes(tag)) tags.push(tag);
+        usedTags.add(tag);
       }
     }
-    return tags;
+    const ordered = (categories ?? []).filter((tag) => usedTags.has(tag));
+    for (const project of projects) {
+      for (const tag of project.tags ?? []) {
+        if (!ordered.includes(tag)) ordered.push(tag);
+      }
+    }
+    return ordered;
   }, [categories, projects]);
 
   const toggleTag = (tag: string) => {
