@@ -35,6 +35,10 @@
 :root {
   --ink: #000000;
   --paper: #ffffff;
+  /* Single source of truth for the theme flip: the sitewide color fade and
+     the toggle's square↔circle morph both use this duration/easing. */
+  --theme-flip-duration: 400ms;
+  --theme-flip-easing: ease;
 }
 
 :root[data-theme='dark'] {
@@ -44,16 +48,16 @@
 
 /* Applied to <html> for ~500ms while the theme flips so every color swap
    animates instead of snapping; removed afterwards so hovers stay instant. */
-html.theme-transition *,
+html.theme-transition *:not(.theme-toggle),
 html.theme-transition *::before,
 html.theme-transition *::after {
   transition:
-    background-color 400ms ease,
-    color 400ms ease,
-    border-color 400ms ease,
-    box-shadow 400ms ease,
-    fill 400ms ease,
-    stroke 400ms ease !important;
+    background-color var(--theme-flip-duration) var(--theme-flip-easing),
+    color var(--theme-flip-duration) var(--theme-flip-easing),
+    border-color var(--theme-flip-duration) var(--theme-flip-easing),
+    box-shadow var(--theme-flip-duration) var(--theme-flip-easing),
+    fill var(--theme-flip-duration) var(--theme-flip-easing),
+    stroke var(--theme-flip-duration) var(--theme-flip-easing) !important;
 }
 
 /* Header/drawer menu link text snaps between themes instead of fading
@@ -232,9 +236,9 @@ h3 > a {
   border-radius: 0 !important;
   cursor: pointer;
   transition:
-    background-color 400ms ease,
-    border-color 400ms ease,
-    border-radius 400ms ease;
+    background-color var(--theme-flip-duration) var(--theme-flip-easing),
+    border-color var(--theme-flip-duration) var(--theme-flip-easing),
+    border-radius var(--theme-flip-duration) var(--theme-flip-easing);
 }
 
 :root[data-theme='dark'] .theme-toggle,
