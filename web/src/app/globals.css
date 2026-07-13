@@ -147,30 +147,25 @@ h3 > a {
   letter-spacing: 0.05em;
   line-height: 1;
   padding: 9px 16px;
-  border: 1.5px solid var(--pill-color);
+  border: 1.5px solid #000;
   border-radius: 0 !important;
-  color: var(--pill-color);
-  background-color: transparent;
+  color: #000;
+  background-color: var(--pill-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   transition:
-    background-color 200ms ease,
-    color 200ms ease,
+    filter 200ms ease,
+    box-shadow 200ms ease,
     opacity 200ms ease;
 }
 
 .tag-pill:hover {
-  background-color: color-mix(in srgb, var(--pill-color) 18%, transparent);
+  filter: brightness(0.92);
 }
 
 .tag-pill.selected {
-  background-color: var(--pill-color);
-  color: var(--pill-contrast);
-}
-
-.tag-pill.selected:hover {
-  background-color: color-mix(in srgb, var(--pill-color) 85%, var(--pill-contrast));
+  box-shadow: inset 0 0 0 2px #000;
 }
 
 .tag-pill .pill-x {
