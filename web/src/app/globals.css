@@ -56,6 +56,13 @@ html.theme-transition *::after {
     stroke 400ms ease !important;
 }
 
+/* Header/drawer menu link text snaps between themes instead of fading
+   (the toggle button keeps its own square↔circle animation) */
+html.theme-transition .header *:not(.theme-toggle),
+html.theme-transition .MuiDrawer-root *:not(.theme-toggle) {
+  transition: none !important;
+}
+
 * {
   border-radius: 0 !important;
 }
@@ -217,8 +224,8 @@ h3 > a {
 /* ------------------------------------------------------- */
 
 .theme-toggle {
-  width: 36px;
-  height: 36px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   background-color: var(--ink);
   border: 1.5px solid var(--ink);
