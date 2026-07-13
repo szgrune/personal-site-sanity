@@ -2,6 +2,7 @@ import Typography from "@mui/material/Typography";
 
 import { client } from "@/sanity/client";
 import { ABOUT_PAGE_QUERY } from "@/sanity/queries";
+import { sizedImageUrl } from "@/sanity/imageUrl";
 import PortableTextRenderer from "@/components/PortableTextRenderer";
 
 const options = { next: { revalidate: 60 } };
@@ -22,7 +23,10 @@ export default async function AboutPage() {
       <div id="container">
         {about.headshotUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={about.headshotUrl} alt={about.headshotAlt || "Headshot"} />
+          <img
+            src={sizedImageUrl(about.headshotUrl, { width: 900 })}
+            alt={about.headshotAlt || "Headshot"}
+          />
         )}
         <div>
           <PortableTextRenderer value={about.bio} />

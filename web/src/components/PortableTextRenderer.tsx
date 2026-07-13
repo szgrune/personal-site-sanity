@@ -2,6 +2,17 @@ import React from "react";
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import Typography from "@mui/material/Typography";
 
+import { sizedImageUrl } from "@/sanity/imageUrl";
+
+// Figures cap out around 50-70vh tall (up to 75vh for "wide"); these widths
+// comfortably cover that on common desktop widths without the full original.
+const FIGURE_WIDTH: Record<NonNullable<FigureValue["size"]>, number> = {
+  default: 1400,
+  large: 1600,
+  wide: 1800,
+};
+const IMAGE_ROW_WIDTH = 900;
+
 // Renders portable text with the same element/typography mapping the original
 // site got from MuiMarkdown: headings become MUI Typography variants (h3/h4
 // use Coolvetica, h5/h6 use Folio Book via the theme), paragraphs are plain
@@ -89,7 +100,11 @@ export const portableTextComponents: PortableTextComponents = {
       return (
         <figure>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value.imageUrl} alt={value.imageAlt || ""} className={sizeClass} />
+          <img
+            src={sizedImageUrl(value.imageUrl, { width: FIGURE_WIDTH[value.size ?? "default"] })}
+            alt={value.imageAlt || ""}
+            className={sizeClass}
+          />
           <Caption text={value.caption} />
         </figure>
       );
@@ -102,7 +117,11 @@ export const portableTextComponents: PortableTextComponents = {
             {value.images.map((image) => (
               <div key={image._key}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={image.url} alt={image.alt || ""} style={{ width: "100%" }} />
+                <img
+                  src={sizedImageUrl(image.url, { width: IMAGE_ROW_WIDTH })}
+                  alt={image.alt || ""}
+                  style={{ width: "100%" }}
+                />
               </div>
             ))}
           </div>

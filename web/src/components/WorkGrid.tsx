@@ -9,6 +9,11 @@ import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@
 import { useRouter } from "next/navigation";
 
 import TagPills from "./TagPills";
+import { sizedImageUrl } from "@/sanity/imageUrl";
+
+// Cards render at 200px tall in a ~3-up grid; 700px covers retina displays
+// without shipping the full-resolution original.
+const CARD_IMAGE_WIDTH = 700;
 
 export type ProjectCard = {
   _id: string;
@@ -139,20 +144,23 @@ function HoverGifImage({
   alt: string;
   isHovering: boolean;
 }) {
+  // Resize to the card's actual display size (Sanity resizes animated GIFs
+  // in place, keeping every frame) before layering on the poster/hover params.
+  const sizedGifSrc = sizedImageUrl(gifSrc, { width: CARD_IMAGE_WIDTH }) ?? gifSrc;
   // Sanity's CDN rasterizes a static frame from an animated GIF when a
   // non-gif format is requested, so the poster is a real static asset —
   // never the animated file — with no client-side extraction/race involved.
-  const staticSrc = withImageParam(gifSrc, "fm=png");
+  const staticSrc = withImageParam(sizedGifSrc, "fm=png");
   const [src, setSrc] = useState(staticSrc);
 
   useEffect(() => {
     if (isHovering) {
       // Cache-bust so the animation restarts from frame one on every hover
-      setSrc(withImageParam(gifSrc, `t=${Date.now()}`));
+      setSrc(withImageParam(sizedGifSrc, `t=${Date.now()}`));
     } else {
       setSrc(staticSrc);
     }
-  }, [isHovering, gifSrc, staticSrc]);
+  }, [isHovering, sizedGifSrc, staticSrc]);
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -208,11 +216,16 @@ function CardMediaBlock({
     return (
       <CardMedia
         sx={{ objectFit: "contain", height: 200, borderRadius: 0, backgroundColor: "black", backgroundSize: "contain", backgroundRepeat: "no-repeat" }}
-        image={project.cardImageUrl || undefined}
+        image={sizedImageUrl(project.cardImageUrl, { width: CARD_IMAGE_WIDTH })}
       />
     );
   }
-  return <CardMedia sx={{ height: 200, borderRadius: 0 }} image={project.cardImageUrl || undefined} />;
+  return (
+    <CardMedia
+      sx={{ height: 200, borderRadius: 0 }}
+      image={sizedImageUrl(project.cardImageUrl, { width: CARD_IMAGE_WIDTH })}
+    />
+  );
 }
 
 function ComingSoonCard({ project }: { project: ProjectCard }) {
