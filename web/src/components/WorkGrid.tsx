@@ -3,7 +3,7 @@
 // Work page project card grid, ported from the original Work.js.
 // Card content now comes from Sanity `project` documents.
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -299,46 +299,7 @@ function LinkedCard({ project }: { project: ProjectCard }) {
   );
 }
 
-/**
- * Grid item that fades/scales in and out when its card is filtered, and is
- * removed from the layout once the exit animation finishes.
- */
-function AnimatedGridItem({ visible, children }: { visible: boolean; children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(visible);
-  const [shown, setShown] = useState(visible);
-
-  useEffect(() => {
-    if (visible) {
-      setMounted(true);
-      // Two frames so the element paints in its hidden state before animating in
-      const raf = requestAnimationFrame(() => {
-        requestAnimationFrame(() => setShown(true));
-      });
-      return () => cancelAnimationFrame(raf);
-    }
-    setShown(false);
-    const timeout = setTimeout(() => setMounted(false), 320);
-    return () => clearTimeout(timeout);
-  }, [visible]);
-
-  if (!mounted) return null;
-
-  return (
-    <Grid
-      item
-      xs={2}
-      sm={4}
-      md={4}
-      style={{
-        opacity: shown ? 1 : 0,
-        transform: shown ? "scale(1)" : "scale(0.9)",
-        transition: "opacity 300ms ease, transform 300ms ease",
-      }}
-    >
-      {children}
-    </Grid>
-  );
-}
+const EXIT_MS = 300;
 
 export default function WorkGrid({
   tagline,
@@ -370,15 +331,94 @@ export default function WorkGrid({
     return ordered;
   }, [categories, projects]);
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+  // --- Filtering with FLIP layout animation -------------------------------
+  // Exiting cards fade/scale out in place (EXIT_MS), then leave the layout;
+  // at that moment the surviving cards are translated from their old grid
+  // positions to their new ones so the reflow reads as smooth movement.
+
+  const allIds = useMemo(() => projects.map((p) => p._id), [projects]);
+  const [renderedIds, setRenderedIds] = useState<Set<string>>(() => new Set(allIds));
+  const [exitingIds, setExitingIds] = useState<Set<string>>(() => new Set());
+  const [enteringIds, setEnteringIds] = useState<Set<string>>(() => new Set());
+  const itemEls = useRef(new Map<string, HTMLElement>());
+  const firstPositions = useRef<Map<string, { left: number; top: number }> | null>(null);
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const computeVisibleIds = (selected: string[]) =>
+    new Set(
+      projects
+        .filter(
+          (project) =>
+            selected.length === 0 ||
+            (project.tags ?? []).some((tag) => selected.includes(tag)),
+        )
+        .map((project) => project._id),
     );
+
+  // Capture current layout positions of the cards still in the DOM ("First"
+  // in FLIP). offsetLeft/Top are layout-relative, so scrolling can't skew them.
+  const capturePositions = () => {
+    const positions = new Map<string, { left: number; top: number }>();
+    itemEls.current.forEach((el, id) => {
+      positions.set(id, { left: el.offsetLeft, top: el.offsetTop });
+    });
+    firstPositions.current = positions;
   };
 
-  const isVisible = (project: ProjectCard) =>
-    selectedTags.length === 0 ||
-    (project.tags ?? []).some((tag) => selectedTags.includes(tag));
+  const toggleTag = (tag: string) => {
+    const nextSelected = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
+    const target = computeVisibleIds(nextSelected);
+
+    // "First" snapshot before entering cards join the layout
+    capturePositions();
+
+    setSelectedTags(nextSelected);
+    setEnteringIds(new Set([...target].filter((id) => !renderedIds.has(id) || exitingIds.has(id))));
+    const nextRendered = new Set([...renderedIds, ...target]);
+    setRenderedIds(nextRendered);
+    setExitingIds(new Set([...nextRendered].filter((id) => !target.has(id))));
+
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    if (enterTimer.current) clearTimeout(enterTimer.current);
+    exitTimer.current = setTimeout(() => {
+      // "First" snapshot before the faded-out cards leave the layout
+      capturePositions();
+      setRenderedIds(target);
+      setExitingIds(new Set());
+    }, EXIT_MS);
+    enterTimer.current = setTimeout(() => setEnteringIds(new Set()), EXIT_MS + 50);
+  };
+
+  useEffect(
+    () => () => {
+      if (exitTimer.current) clearTimeout(exitTimer.current);
+      if (enterTimer.current) clearTimeout(enterTimer.current);
+    },
+    [],
+  );
+
+  // "Last" + "Invert" + "Play": after a render that changed the layout,
+  // translate each surviving card from where it was to where it now is.
+  useLayoutEffect(() => {
+    const first = firstPositions.current;
+    firstPositions.current = null;
+    if (!first) return;
+    itemEls.current.forEach((el, id) => {
+      const prev = first.get(id);
+      if (!prev) return; // newly entered card, animated via CSS instead
+      const dx = prev.left - el.offsetLeft;
+      const dy = prev.top - el.offsetTop;
+      if (dx === 0 && dy === 0) return;
+      el.style.transition = "none";
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+      void el.offsetWidth; // flush so the inverted position paints
+      el.style.transition = "transform 300ms ease";
+      el.style.transform = "";
+    });
+  });
 
   return (
     <div>
@@ -402,15 +442,33 @@ export default function WorkGrid({
       >
         {/* rendering the card component with card content */}
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
-          {projects.map((project) => (
-            <AnimatedGridItem key={project._id} visible={isVisible(project)}>
-              {project.comingSoon || !project.slug ? (
-                <ComingSoonCard project={project} />
-              ) : (
-                <LinkedCard project={project} />
-              )}
-            </AnimatedGridItem>
-          ))}
+          {projects
+            .filter((project) => renderedIds.has(project._id))
+            .map((project) => (
+              <Grid
+                item
+                xs={2}
+                sm={4}
+                md={4}
+                key={project._id}
+                ref={(el: HTMLElement | null) => {
+                  if (el) itemEls.current.set(project._id, el);
+                  else itemEls.current.delete(project._id);
+                }}
+              >
+                <div
+                  className={`card-anim${exitingIds.has(project._id) ? " card-exit" : ""}${
+                    enteringIds.has(project._id) ? " card-enter" : ""
+                  }`}
+                >
+                  {project.comingSoon || !project.slug ? (
+                    <ComingSoonCard project={project} />
+                  ) : (
+                    <LinkedCard project={project} />
+                  )}
+                </div>
+              </Grid>
+            ))}
         </Grid>
       </div>
     </div>

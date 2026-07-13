@@ -186,6 +186,34 @@ h3 > a {
   margin-left: 9px;
 }
 
+/* Work card show/hide (grid items move via FLIP transforms in WorkGrid) */
+.card-anim {
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.card-anim.card-exit {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+.card-anim.card-enter {
+  animation: card-in 300ms ease both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ---------------------------------------------------------------- */
 /* Project pages (originally per-page <style> blocks in MuiMarkdown) */
 /* ---------------------------------------------------------------- */
