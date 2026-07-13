@@ -189,6 +189,20 @@ export default function FreeformGallery({
 
   const isMobile = cw > 0 && cw < MOBILE_BREAKPOINT;
   const [aspectRatios, setAspectRatios] = useState<AspectRatios>([null, null, null]);
+
+  // Each item stays invisible until its media has loaded, then fades in —
+  // this hides the layout reshuffle that happens as aspect ratios arrive.
+  const [mediaLoaded, setMediaLoaded] = useState<boolean[]>([false, false, false]);
+  const mediaEls = useRef<(HTMLVideoElement | HTMLImageElement | null)[]>([null, null, null]);
+
+  const markLoaded = useCallback((index: number) => {
+    setMediaLoaded((prev) => {
+      if (prev[index]) return prev;
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
+  }, []);
   const [items, setItems] = useState<Item[]>(() =>
     getInitialLayout(typeof window !== "undefined" ? window.innerWidth : 800, heights, [
       null,
@@ -204,6 +218,27 @@ export default function FreeformGallery({
   const prevIsMobileRef = useRef<boolean | null>(null);
 
   boundsRef.current = { width: cw, height: ch };
+
+  // Media cached before hydration never fires load events — check directly.
+  // A generous fallback reveals everything in case a file stalls entirely.
+  useEffect(() => {
+    const [video, gif, image] = mediaEls.current;
+    if (video && "readyState" in video && video.readyState >= 2) markLoaded(0);
+    [gif, image].forEach((el, i) => {
+      const img = el as HTMLImageElement | null;
+      if (img && "complete" in img && img.complete && img.naturalWidth) {
+        setAspectRatios((prev) => {
+          const next = [...prev];
+          next[i + 1] = img.naturalWidth / img.naturalHeight;
+          return next;
+        });
+        markLoaded(i + 1);
+      }
+    });
+    const fallback = setTimeout(() => setMediaLoaded([true, true, true]), 5000);
+    return () => clearTimeout(fallback);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setAspectRatio = useCallback((index: number, ratio: number) => {
     setAspectRatios((prev) => {
@@ -372,17 +407,23 @@ export default function FreeformGallery({
             boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
             touchAction: "none",
             userSelect: "none",
-            pointerEvents: "auto",
+            pointerEvents: mediaLoaded[index] ? "auto" : "none",
+            opacity: mediaLoaded[index] ? 1 : 0,
+            transition: "opacity 400ms ease",
             ...parallax(index),
           }}
         >
           {index === 0 && videoSrc && (
             <video
+              ref={(el) => {
+                mediaEls.current[0] = el;
+              }}
               src={videoSrc}
               onLoadedMetadata={(e) => {
                 const v = e.target as HTMLVideoElement;
                 if (v.videoWidth && v.videoHeight) setAspectRatio(0, v.videoWidth / v.videoHeight);
               }}
+              onLoadedData={() => markLoaded(0)}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
               muted
               loop
@@ -394,12 +435,16 @@ export default function FreeformGallery({
           {index === 1 && gifSrc && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
+              ref={(el) => {
+                mediaEls.current[1] = el;
+              }}
               src={gifSrc}
               alt=""
               onLoad={(e) => {
                 const img = e.target as HTMLImageElement;
                 if (img.naturalWidth && img.naturalHeight)
                   setAspectRatio(1, img.naturalWidth / img.naturalHeight);
+                markLoaded(1);
               }}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
@@ -407,12 +452,16 @@ export default function FreeformGallery({
           {index === 2 && imageSrc && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
+              ref={(el) => {
+                mediaEls.current[2] = el;
+              }}
               src={imageSrc}
               alt=""
               onLoad={(e) => {
                 const img = e.target as HTMLImageElement;
                 if (img.naturalWidth && img.naturalHeight)
                   setAspectRatio(2, img.naturalWidth / img.naturalHeight);
+                markLoaded(2);
               }}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
