@@ -369,7 +369,7 @@ export default function FreeformGallery({
             cursor: desktop ? "grab" : "default",
             ...(draggingIndex === index && { cursor: "grabbing" }),
             overflow: "hidden",
-            border: "1px solid var(--ink)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
             touchAction: "none",
             userSelect: "none",
             pointerEvents: "auto",
