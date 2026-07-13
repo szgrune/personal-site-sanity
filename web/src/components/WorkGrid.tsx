@@ -124,6 +124,12 @@ function HoverVideo({ videoSrc, isHovering }: { videoSrc: string; isHovering: bo
   );
 }
 
+// Appends a Sanity image-pipeline param to a CDN asset URL, respecting an
+// existing query string if the source URL already has one.
+function withImageParam(url: string, param: string) {
+  return `${url}${url.includes("?") ? "&" : "?"}${param}`;
+}
+
 function HoverGifImage({
   gifSrc,
   alt,
@@ -133,51 +139,25 @@ function HoverGifImage({
   alt: string;
   isHovering: boolean;
 }) {
-  const imgRef = useRef<HTMLImageElement>(null);
-  const staticFrameRef = useRef<string | null>(null);
+  // Sanity's CDN rasterizes a static frame from an animated GIF when a
+  // non-gif format is requested, so the poster is a real static asset —
+  // never the animated file — with no client-side extraction/race involved.
+  const staticSrc = withImageParam(gifSrc, "fm=png");
+  const [src, setSrc] = useState(staticSrc);
 
   useEffect(() => {
-    if (imgRef.current) {
-      if (isHovering) {
-        // Show animated GIF and restart animation on hover
-        imgRef.current.src = `${gifSrc}?t=${Date.now()}`;
-      } else {
-        // When not hovering, show static first frame if available
-        if (staticFrameRef.current) {
-          imgRef.current.src = staticFrameRef.current;
-        } else {
-          // Extract first frame on first load
-          const img = new Image();
-          img.crossOrigin = "anonymous";
-          img.onload = () => {
-            try {
-              const canvas = document.createElement("canvas");
-              canvas.width = img.naturalWidth || img.width;
-              canvas.height = img.naturalHeight || img.height;
-              const ctx = canvas.getContext("2d");
-              if (!ctx) return;
-              ctx.drawImage(img, 0, 0);
-              const dataUrl = canvas.toDataURL("image/png");
-              staticFrameRef.current = dataUrl;
-              if (imgRef.current && !isHovering) {
-                imgRef.current.src = dataUrl;
-              }
-            } catch {
-              // If extraction fails, just use the GIF
-              staticFrameRef.current = gifSrc;
-            }
-          };
-          img.src = gifSrc;
-        }
-      }
+    if (isHovering) {
+      // Cache-bust so the animation restarts from frame one on every hover
+      setSrc(withImageParam(gifSrc, `t=${Date.now()}`));
+    } else {
+      setSrc(staticSrc);
     }
-  }, [isHovering, gifSrc]);
+  }, [isHovering, gifSrc, staticSrc]);
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      ref={imgRef}
-      src={gifSrc}
+      src={src}
       alt={alt}
       style={{
         width: "100%",
