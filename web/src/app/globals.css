@@ -128,6 +128,69 @@ h3 > a {
   margin-bottom: 5vh;
 }
 
+/* ------------------------------------------------------- */
+/* Work page tag filter pills (CMYK rectangles)             */
+/* ------------------------------------------------------- */
+
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 5vw 5vh;
+  animation: route-fade-in 300ms ease both;
+}
+
+.tag-pill {
+  font-family: 'Folio Book', Helvetica, Arial, sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  padding: 9px 16px;
+  border: 1.5px solid var(--pill-color);
+  border-radius: 0 !important;
+  color: var(--pill-color);
+  background-color: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    opacity 200ms ease;
+}
+
+.tag-pill:hover {
+  background-color: color-mix(in srgb, var(--pill-color) 18%, transparent);
+}
+
+.tag-pill.selected {
+  background-color: var(--pill-color);
+  color: var(--pill-contrast);
+}
+
+.tag-pill.selected:hover {
+  background-color: color-mix(in srgb, var(--pill-color) 85%, var(--pill-contrast));
+}
+
+.tag-pill .pill-x {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 0.8em;
+  transition:
+    max-width 200ms ease,
+    opacity 200ms ease,
+    margin-left 200ms ease;
+}
+
+.tag-pill.selected .pill-x {
+  max-width: 1em;
+  opacity: 1;
+  margin-left: 9px;
+}
+
 /* ---------------------------------------------------------------- */
 /* Project pages (originally per-page <style> blocks in MuiMarkdown) */
 /* ---------------------------------------------------------------- */

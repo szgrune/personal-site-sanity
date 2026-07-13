@@ -14,6 +14,7 @@ export default async function WorkPage() {
   return (
     <WorkGrid
       tagline={workPage?.tagline}
+      categories={workPage?.categories}
       projects={(workPage?.projects ?? []) as ProjectCard[]}
     />
   );

@@ -25,6 +25,7 @@ const projectCardFields = /* groq */ `
   _id,
   title,
   "slug": slug.current,
+  tags,
   cardSubtitle,
   cardDescription,
   cardMediaType,
@@ -37,6 +38,7 @@ const projectCardFields = /* groq */ `
 export const WORK_PAGE_QUERY = defineQuery(/* groq */ `
   *[_type == "workPage"][0]{
     tagline,
+    categories,
     projects[]->{
       ${projectCardFields}
     }

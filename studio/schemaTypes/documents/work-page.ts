@@ -20,6 +20,15 @@ export const workPage = defineType({
       description: 'The heading above the project grid. Line breaks are preserved.',
     }),
     defineField({
+      name: 'categories',
+      title: 'Base Categories',
+      type: 'array',
+      of: [defineArrayMember({type: 'string'})],
+      options: {layout: 'tags'},
+      description:
+        'Tag pills always shown on the work page, even before any project uses them. Tags found on projects are added to these automatically.',
+    }),
+    defineField({
       name: 'projects',
       type: 'array',
       description: 'Projects shown on the work page, in display order',

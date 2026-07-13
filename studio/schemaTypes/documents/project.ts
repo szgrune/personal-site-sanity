@@ -27,6 +27,16 @@ export const project = defineType({
       group: 'page',
     }),
     defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [defineArrayMember({type: 'string'})],
+      options: {layout: 'tags'},
+      description:
+        'Project categories (e.g. Front End, UX Design). Each tag becomes a filter pill on the work page; entering a new tag creates a new pill automatically.',
+      group: 'card',
+    }),
+    defineField({
       name: 'cardSubtitle',
       title: 'Card Subtitle',
       type: 'string',

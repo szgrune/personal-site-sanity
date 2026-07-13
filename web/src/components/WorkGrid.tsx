@@ -3,15 +3,18 @@
 // Work page project card grid, ported from the original Work.js.
 // Card content now comes from Sanity `project` documents.
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+
+import TagPills from "./TagPills";
 
 export type ProjectCard = {
   _id: string;
   title: string;
   slug?: string | null;
+  tags?: string[] | null;
   cardSubtitle?: string | null;
   cardDescription?: string | null;
   cardMediaType?: "image" | "animatedGif" | "video" | null;
@@ -296,13 +299,80 @@ function LinkedCard({ project }: { project: ProjectCard }) {
   );
 }
 
+/**
+ * Grid item that fades/scales in and out when its card is filtered, and is
+ * removed from the layout once the exit animation finishes.
+ */
+function AnimatedGridItem({ visible, children }: { visible: boolean; children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(visible);
+  const [shown, setShown] = useState(visible);
+
+  useEffect(() => {
+    if (visible) {
+      setMounted(true);
+      // Two frames so the element paints in its hidden state before animating in
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setShown(true));
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+    setShown(false);
+    const timeout = setTimeout(() => setMounted(false), 320);
+    return () => clearTimeout(timeout);
+  }, [visible]);
+
+  if (!mounted) return null;
+
+  return (
+    <Grid
+      item
+      xs={2}
+      sm={4}
+      md={4}
+      style={{
+        opacity: shown ? 1 : 0,
+        transform: shown ? "scale(1)" : "scale(0.9)",
+        transition: "opacity 300ms ease, transform 300ms ease",
+      }}
+    >
+      {children}
+    </Grid>
+  );
+}
+
 export default function WorkGrid({
   tagline,
+  categories,
   projects,
 }: {
   tagline?: string | null;
+  categories?: string[] | null;
   projects: ProjectCard[];
 }) {
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Pills: base categories from the CMS first, then any extra tags found on
+  // projects — so entering a brand new tag on a project creates a new pill.
+  const allTags = useMemo(() => {
+    const tags = [...(categories ?? [])];
+    for (const project of projects) {
+      for (const tag of project.tags ?? []) {
+        if (!tags.includes(tag)) tags.push(tag);
+      }
+    }
+    return tags;
+  }, [categories, projects]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  };
+
+  const isVisible = (project: ProjectCard) =>
+    selectedTags.length === 0 ||
+    (project.tags ?? []).some((tag) => selectedTags.includes(tag));
+
   return (
     <div>
       <Typography variant="h5" component="h5" sx={{ textAlign: "center", marginBottom: "5vh" }}>
@@ -313,6 +383,7 @@ export default function WorkGrid({
           </React.Fragment>
         ))}
       </Typography>
+      <TagPills tags={allTags} selected={selectedTags} onToggle={toggleTag} />
       <div
         style={{
           display: "flex",
@@ -325,13 +396,13 @@ export default function WorkGrid({
         {/* rendering the card component with card content */}
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12 }}>
           {projects.map((project) => (
-            <Grid item xs={2} sm={4} md={4} key={project._id}>
+            <AnimatedGridItem key={project._id} visible={isVisible(project)}>
               {project.comingSoon || !project.slug ? (
                 <ComingSoonCard project={project} />
               ) : (
                 <LinkedCard project={project} />
               )}
-            </Grid>
+            </AnimatedGridItem>
           ))}
         </Grid>
       </div>
