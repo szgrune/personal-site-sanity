@@ -12,7 +12,7 @@ import Drawer from "@mui/material/Drawer";
 import CloseIcon from "@mui/icons-material/Close";
 import Divider from "@mui/material/Divider";
 
-import MaterialUISwitch from "./MaterialUISwitch";
+import ThemeToggle from "./ThemeToggle";
 import ExternalLink from "./ExternalLink";
 import type { SiteSettings } from "./Header";
 
@@ -96,7 +96,7 @@ export default function MainNavigation({
             <IconButton onClick={toggleDrawer(false)}>
               <CloseIcon />
             </IconButton>
-            <MaterialUISwitch checked={checked} onChange={onChange} />
+            <ThemeToggle checked={checked} onChange={onChange} />
           </Box>
 
           <Divider sx={{ mb: 2 }} />

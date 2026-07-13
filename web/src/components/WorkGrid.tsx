@@ -260,7 +260,7 @@ function ComingSoonCard({ project }: { project: ProjectCard }) {
               backgroundColor: (theme) => theme.palette.background.default,
               padding: "8px 12px",
               borderRadius: 0,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              border: (theme) => `1px solid ${theme.palette.text.primary}`,
             }}
           >
             Coming soon

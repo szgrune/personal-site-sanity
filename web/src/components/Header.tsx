@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Box, Typography } from "@mui/material";
 
-import MaterialUISwitch from "./MaterialUISwitch";
+import ThemeToggle from "./ThemeToggle";
 import MainNavigation from "./MainNavigation";
 import ExternalLink from "./ExternalLink";
 
@@ -120,7 +120,7 @@ export default function Header({
             </a>
           </Typography>
         )}
-        <MaterialUISwitch checked={checked} onChange={onChange} />
+        <ThemeToggle checked={checked} onChange={onChange} />
       </Box>
       <MainNavigation settings={settings} checked={checked} onChange={onChange} />
     </div>

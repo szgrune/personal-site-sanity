@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,24 +14,44 @@ export default function ThemeRegistry({
   settings: SiteSettings;
   children: React.ReactNode;
 }) {
-  // state to manage the dark mode
-  const [toggleDarkMode, setToggleDarkMode] = useState(true);
+  // Monochrome scheme: light mode (white fills, black text/outlines) is the
+  // default. No system preference check — to restore it later, swap the
+  // useState below for the commented-out media query version:
+  //
+  // const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+  // const [toggleDarkMode, setToggleDarkMode] = useState(prefersDark);
+  // (import useMediaQuery from "@mui/material/useMediaQuery")
+  const [toggleDarkMode, setToggleDarkMode] = useState(false);
 
-  // function to toggle the dark mode as true or false
+  // Flip the theme; the .theme-transition class briefly enables color
+  // transitions on every element so the white↔black swap animates smoothly
+  // instead of snapping (and doesn't slow down normal hover interactions).
   const toggleDarkTheme = () => {
-    setToggleDarkMode(!toggleDarkMode);
+    const root = document.documentElement;
+    root.classList.add("theme-transition");
+    setToggleDarkMode((mode) => !mode);
+    window.setTimeout(() => root.classList.remove("theme-transition"), 500);
   };
 
-  // applying the primary and secondary theme colors
+  // Expose the mode to plain CSS (tag pills, gallery borders, toggle button)
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", toggleDarkMode ? "dark" : "light");
+  }, [toggleDarkMode]);
+
+  const ink = toggleDarkMode ? "#ffffff" : "#000000";
+  const paper = toggleDarkMode ? "#000000" : "#ffffff";
+
   let darkTheme = createTheme({
     palette: {
-      mode: toggleDarkMode ? "dark" : "light", // handle the dark mode state on toggle
-      primary: {
-        main: "#90caf9",
-      },
-      secondary: {
-        main: "#131052",
-      },
+      mode: toggleDarkMode ? "dark" : "light",
+      primary: { main: ink },
+      secondary: { main: ink },
+      background: { default: paper, paper },
+      text: { primary: ink, secondary: ink },
+      divider: ink,
+      // Previous (pre-monochrome) palette, kept for reference:
+      // primary: { main: "#90caf9" },
+      // secondary: { main: "#131052" },
     },
     typography: {
       h6: {
@@ -54,6 +74,24 @@ export default function ThemeRegistry({
       body1: {
         fontFamily: "Folio Book, sans-serif",
         fontWeight: 300,
+      },
+    },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+          },
+        },
+      },
+      // Cards are delineated by thin ink outlines instead of shadows
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            border: `1px solid ${ink}`,
+            boxShadow: "none",
+          },
+        },
       },
     },
   });

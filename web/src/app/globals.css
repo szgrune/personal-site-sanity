@@ -30,6 +30,32 @@
   src: local('Noto Sans'), url('/fonts/Noto-Sans-regular.woff2') format('woff2');
 }
 
+/* Monochrome theme: ink (text/outlines) on paper (fills). Light mode is the
+   default; ThemeRegistry stamps data-theme on <html> when toggled. */
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+}
+
+:root[data-theme='dark'] {
+  --ink: #ffffff;
+  --paper: #000000;
+}
+
+/* Applied to <html> for ~500ms while the theme flips so every color swap
+   animates instead of snapping; removed afterwards so hovers stay instant. */
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 400ms ease,
+    color 400ms ease,
+    border-color 400ms ease,
+    box-shadow 400ms ease,
+    fill 400ms ease,
+    stroke 400ms ease !important;
+}
+
 * {
   border-radius: 0 !important;
 }
@@ -147,25 +173,25 @@ h3 > a {
   letter-spacing: 0.05em;
   line-height: 1;
   padding: 9px 16px;
-  border: 1.5px solid #000;
+  border: 1.5px solid var(--ink);
   border-radius: 0 !important;
-  color: #000;
-  background-color: var(--pill-color);
+  color: var(--ink);
+  background-color: var(--paper);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   transition:
-    filter 200ms ease,
+    background-color 200ms ease,
     box-shadow 200ms ease,
     opacity 200ms ease;
 }
 
 .tag-pill:hover {
-  filter: brightness(0.92);
+  background-color: color-mix(in srgb, var(--ink) 10%, var(--paper));
 }
 
 .tag-pill.selected {
-  box-shadow: inset 0 0 0 2px #000;
+  box-shadow: inset 0 0 0 2px var(--ink);
 }
 
 .tag-pill .pill-x {
@@ -184,6 +210,29 @@ h3 > a {
   max-width: 1em;
   opacity: 1;
   margin-left: 9px;
+}
+
+/* ------------------------------------------------------- */
+/* Theme toggle: black square ↔ white circle                */
+/* ------------------------------------------------------- */
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background-color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 0 !important;
+  cursor: pointer;
+  transition:
+    background-color 400ms ease,
+    border-color 400ms ease,
+    border-radius 400ms ease;
+}
+
+:root[data-theme='dark'] .theme-toggle,
+.theme-toggle.dark {
+  border-radius: 50% !important;
 }
 
 /* Work card show/hide (grid items move via FLIP transforms in WorkGrid) */
@@ -309,8 +358,8 @@ h3 > a {
 
   .project-page .image-row > div {
     width: 50%;
-    border-right: 0.5px solid black;
-    border-left: 0.5px solid black;
+    border-right: 0.5px solid var(--ink);
+    border-left: 0.5px solid var(--ink);
   }
 }
 
