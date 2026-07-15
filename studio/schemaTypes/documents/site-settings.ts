@@ -13,6 +13,14 @@ export const siteSettings = defineType({
       description: 'Wordmark in the site header, e.g. "samuel z grunebaum"',
     }),
     defineField({
+      name: 'favicon',
+      title: 'Favicon',
+      type: 'image',
+      description:
+        'Browser tab icon. Use a square PNG or SVG (at least 64x64). Falls back to the built-in favicon if empty.',
+      options: {accept: 'image/png,image/svg+xml,image/jpeg,image/webp'},
+    }),
+    defineField({
       name: 'cvFile',
       title: 'CV (PDF)',
       type: 'file',

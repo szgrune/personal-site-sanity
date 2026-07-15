@@ -15,6 +15,8 @@ export type SiteSettings = {
   linkedinUrl?: string | null;
   cvUrl?: string | null;
   portfolioUrl?: string | null;
+  faviconUrl?: string | null;
+  faviconMimeType?: string | null;
 };
 
 export default function Header({

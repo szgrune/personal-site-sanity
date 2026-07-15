@@ -8,7 +8,9 @@ export const SITE_SETTINGS_QUERY = defineQuery(/* groq */ `
     githubUrl,
     linkedinUrl,
     "cvUrl": cvFile.asset->url,
-    "portfolioUrl": portfolioFile.asset->url
+    "portfolioUrl": portfolioFile.asset->url,
+    "faviconUrl": favicon.asset->url,
+    "faviconMimeType": favicon.asset->mimeType
   }
 `);
 
