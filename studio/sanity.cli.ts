@@ -6,5 +6,8 @@ export default defineCliConfig({
     dataset: 'production',
   },
   studioHost: 'szgrune-personal-site',
+  deployment: {
+    appId: 'fzjnrzrtd110572zbvkcrnrm',
+  },
   autoUpdates: true,
 })

@@ -27,6 +27,9 @@ const projectCardFields = /* groq */ `
   _id,
   title,
   "slug": slug.current,
+  linkType,
+  externalUrl,
+  openInNewTab,
   tags,
   cardSubtitle,
   cardDescription,
@@ -58,7 +61,7 @@ export const ABOUT_PAGE_QUERY = defineQuery(/* groq */ `
 `);
 
 export const PROJECT_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "project" && defined(slug.current) && comingSoon != true].slug.current
+  *[_type == "project" && defined(slug.current) && comingSoon != true && linkType != "external"].slug.current
 `);
 
 export const PROJECT_QUERY = defineQuery(/* groq */ `

@@ -7,6 +7,11 @@ import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from "re
 import Grid from "@mui/material/Grid";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 
 import TagPills from "./TagPills";
 import { sizedImageUrl } from "@/sanity/imageUrl";
@@ -19,9 +24,12 @@ export type ProjectCard = {
   _id: string;
   title: string;
   slug?: string | null;
+  linkType?: "page" | "external" | null;
+  externalUrl?: string | null;
+  openInNewTab?: boolean | null;
   tags?: string[] | null;
-  cardSubtitle?: string | null;
-  cardDescription?: string | null;
+  cardSubtitle?: PortableTextBlock[] | string | null;
+  cardDescription?: PortableTextBlock[] | string | null;
   cardMediaType?: "image" | "animatedGif" | "video" | null;
   cardImageFit?: "cover" | "contain" | null;
   comingSoon?: boolean | null;
@@ -177,16 +185,33 @@ function HoverGifImage({
   );
 }
 
+// Card subtitle/description are portable text (bold/italic only); paragraphs
+// render margin-free so the card keeps its original spacing. Strings are still
+// accepted for any documents published before the rich-text migration.
+const cardRichTextComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <p style={{ margin: 0 }}>{children}</p>,
+  },
+};
+
+function CardRichText({ value }: { value: ProjectCard["cardSubtitle"] }) {
+  if (!value) return null;
+  if (typeof value === "string") return <>{value}</>;
+  return <PortableText value={value} components={cardRichTextComponents} />;
+}
+
 function CardText({ project }: { project: ProjectCard }) {
   return (
     <Box sx={{ padding: "16px 24px 24px 24px" }}>
       <Typography variant="h4" component="div">
         {project.title}
       </Typography>
-      <Typography variant="subtitle1" color="text.secondary">
-        {project.cardSubtitle}
+      <Typography variant="subtitle1" color="text.secondary" component="div">
+        <CardRichText value={project.cardSubtitle} />
       </Typography>
-      <Typography variant="body1">{project.cardDescription}</Typography>
+      <Typography variant="body1" component="div">
+        <CardRichText value={project.cardDescription} />
+      </Typography>
     </Box>
   );
 }
@@ -275,6 +300,34 @@ function LinkedCard({ project }: { project: ProjectCard }) {
     router.push(routePath);
   };
 
+  const externalUrl = project.linkType === "external" ? project.externalUrl : null;
+  const newTab = project.openInNewTab !== false;
+
+  const body = (
+    <Card sx={{ borderRadius: 0 }}>
+      <CardContent sx={{ padding: 0 }}>
+        <CardMediaBlock project={project} isHovering={hover} />
+        <CardText project={project} />
+      </CardContent>
+    </Card>
+  );
+
+  if (externalUrl) {
+    return (
+      <CardActionArea
+        sx={{ borderRadius: 0 }}
+        component="a"
+        href={externalUrl}
+        target={newTab ? "_blank" : undefined}
+        rel={newTab ? "noreferrer" : undefined}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        {body}
+      </CardActionArea>
+    );
+  }
+
   return (
     <CardActionArea
       sx={{ borderRadius: 0 }}
@@ -282,12 +335,7 @@ function LinkedCard({ project }: { project: ProjectCard }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <Card sx={{ borderRadius: 0 }}>
-        <CardContent sx={{ padding: 0 }}>
-          <CardMediaBlock project={project} isHovering={hover} />
-          <CardText project={project} />
-        </CardContent>
-      </Card>
+      {body}
     </CardActionArea>
   );
 }
@@ -454,7 +502,8 @@ export default function WorkGrid({
                     enteringIds.has(project._id) ? " card-enter" : ""
                   }`}
                 >
-                  {project.comingSoon || !project.slug ? (
+                  {project.comingSoon ||
+                  !(project.linkType === "external" ? project.externalUrl : project.slug) ? (
                     <ComingSoonCard project={project} />
                   ) : (
                     <LinkedCard project={project} />

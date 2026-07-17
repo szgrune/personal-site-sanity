@@ -1,6 +1,20 @@
 import {defineType, defineField, defineArrayMember} from 'sanity'
 import {CaseIcon} from '@sanity/icons'
 
+// Text-only rich text for card fields: bold/italic, no headings/lists/links
+const inlineRichText = {
+  type: 'block' as const,
+  styles: [{title: 'Normal', value: 'normal'}],
+  lists: [],
+  marks: {
+    decorators: [
+      {title: 'Strong', value: 'strong'},
+      {title: 'Emphasis', value: 'em'},
+    ],
+    annotations: [],
+  },
+}
+
 export const project = defineType({
   name: 'project',
   title: 'Project',
@@ -19,12 +33,58 @@ export const project = defineType({
       group: ['card', 'page'],
     }),
     defineField({
+      name: 'linkType',
+      title: 'Card Link Type',
+      type: 'string',
+      initialValue: 'page',
+      options: {
+        list: [
+          {title: 'Project page on this site (uses Slug)', value: 'page'},
+          {title: 'Direct link (external URL or path)', value: 'external'},
+        ],
+        layout: 'radio',
+      },
+      description: 'Where the work page card goes when clicked',
+      group: ['card', 'page'],
+    }),
+    defineField({
       name: 'slug',
       type: 'slug',
       options: {source: 'title'},
       description: 'URL path of the project page, e.g. "kimino" → /kimino',
-      validation: (rule) => rule.required(),
+      hidden: ({parent}) => parent?.linkType === 'external',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const doc = context.document as {linkType?: string} | undefined
+          if (doc?.linkType === 'external') return true
+          return value?.current ? true : 'Required unless the card uses a direct link'
+        }),
       group: 'page',
+    }),
+    defineField({
+      name: 'externalUrl',
+      title: 'Direct Link URL',
+      type: 'url',
+      description:
+        'Full URL (https://…) or site-relative path (/37gge) the card links to instead of a project page',
+      hidden: ({parent}) => parent?.linkType !== 'external',
+      validation: (rule) =>
+        rule
+          .uri({allowRelative: true, scheme: ['http', 'https']})
+          .custom((value, context) => {
+            const doc = context.document as {linkType?: string} | undefined
+            if (doc?.linkType !== 'external') return true
+            return value ? true : 'Required when the card uses a direct link'
+          }),
+      group: ['card', 'page'],
+    }),
+    defineField({
+      name: 'openInNewTab',
+      title: 'Open in New Tab',
+      type: 'boolean',
+      initialValue: true,
+      hidden: ({parent}) => parent?.linkType !== 'external',
+      group: ['card', 'page'],
     }),
     defineField({
       name: 'tags',
@@ -39,15 +99,16 @@ export const project = defineType({
     defineField({
       name: 'cardSubtitle',
       title: 'Card Subtitle',
-      type: 'string',
+      type: 'array',
+      of: [defineArrayMember(inlineRichText)],
       description: 'Secondary line on the work page card',
       group: 'card',
     }),
     defineField({
       name: 'cardDescription',
       title: 'Card Description',
-      type: 'text',
-      rows: 3,
+      type: 'array',
+      of: [defineArrayMember(inlineRichText)],
       description: 'Short description on the work page card',
       group: 'card',
     }),
@@ -153,5 +214,17 @@ export const project = defineType({
   ],
   preview: {
     select: {title: 'title', subtitle: 'cardSubtitle', media: 'cardImage'},
+    prepare: ({title, subtitle, media}) => ({
+      title,
+      // cardSubtitle is portable text; flatten it to plain text for the list preview
+      subtitle: Array.isArray(subtitle)
+        ? subtitle
+            .map((block) =>
+              (block.children ?? []).map((child: {text?: string}) => child.text ?? '').join(''),
+            )
+            .join(' ')
+        : subtitle,
+      media,
+    }),
   },
 })
