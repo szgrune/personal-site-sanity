@@ -2,7 +2,7 @@ import { client } from "@/sanity/client";
 import { WORK_PAGE_QUERY } from "@/sanity/queries";
 import WorkGrid, { type ProjectCard } from "@/components/WorkGrid";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 export const metadata = {
   title: "Samuel Z. Grunebaum",

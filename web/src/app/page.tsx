@@ -3,7 +3,7 @@ import { HOME_PAGE_QUERY } from "@/sanity/queries";
 import { sizedImageUrl } from "@/sanity/imageUrl";
 import FreeformGallery from "@/components/FreeformGallery";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 // Gallery items render up to ~500px tall; 1000px covers retina without
 // shipping full-resolution originals.

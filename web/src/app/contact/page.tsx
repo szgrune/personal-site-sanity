@@ -7,7 +7,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { client } from "@/sanity/client";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 export default async function ContactPage() {
   const settings = await client.fetch(SITE_SETTINGS_QUERY, {}, options);

@@ -4,7 +4,7 @@ import { client } from "@/sanity/client";
 import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/queries";
 import PortableTextRenderer from "@/components/PortableTextRenderer";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 export async function generateStaticParams() {
   const slugs = await client

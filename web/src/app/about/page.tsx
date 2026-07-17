@@ -5,7 +5,7 @@ import { ABOUT_PAGE_QUERY } from "@/sanity/queries";
 import { sizedImageUrl } from "@/sanity/imageUrl";
 import PortableTextRenderer from "@/components/PortableTextRenderer";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 export default async function AboutPage() {
   const about = await client.fetch(ABOUT_PAGE_QUERY, {}, options);

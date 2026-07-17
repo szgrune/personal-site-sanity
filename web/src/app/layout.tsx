@@ -7,7 +7,7 @@ import { sizedImageUrl } from "@/sanity/imageUrl";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import type { SiteSettings } from "@/components/Header";
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 60, tags: ["sanity"] } };
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = ((await client.fetch(SITE_SETTINGS_QUERY, {}, options)) ?? {}) as SiteSettings;
