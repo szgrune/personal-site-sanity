@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "build:shelf": "node scripts/build-shelf.mjs",
+    "prebuild": "npm run build:shelf",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

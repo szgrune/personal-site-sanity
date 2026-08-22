@@ -1,0 +1,68 @@
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --ink-muted: #6b6b6b;
+  --rule: #e0e0e0;
+
+  --wood-face: #6b4a2f;
+  --wood-dark: #4a3220;
+  --wood-light: #8a6440;
+  --wood-bevel: #9b7350;
+
+  --cloth-bay-blue: #14558f;
+  --cloth-berkshires-green: #2d6a46;
+  --cloth-duckling-yellow: #f6c51b;
+  --cloth-independence-cranberry: #680a1d;
+  --cloth-ink: #141414;
+
+  --stamp-on-dark: #f2ede3;
+  --stamp-on-light: #141414;
+
+  --ms-paper: #f4f1ea;
+  --ms-edge: #ddd7c9;
+}
+
+:root[data-theme='dark'] {
+  --ink: #ffffff;
+  --paper: #0a0a0a;
+  --rule: #2a2a2a;
+  --ink-muted: #9a9a9a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-noto-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  border-radius: 0;
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}

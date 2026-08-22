@@ -1,0 +1,173 @@
+.composed,
+.uploaded {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2px 0 0 2px;
+}
+
+.composed {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15% 12% 10%;
+  background-color: var(--cloth-color);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 0.025) 0,
+      rgb(255 255 255 / 0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.035) 0,
+      rgb(0 0 0 / 0.035) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  color: var(--stamp-color);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.2);
+}
+
+.uploaded img {
+  object-fit: cover;
+}
+
+.uploadedTitle {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 28% 10% 10%;
+  color: #fff;
+  font-family: var(--font-deaetna), serif;
+  font-size: 1rem;
+  line-height: 1.05;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
+  background: linear-gradient(to bottom, transparent, rgb(0 0 0 / 78%));
+}
+
+.titleBlock {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-deaetna), serif;
+  font-size: 1.28rem;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  margin-top: 0.8rem;
+  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 0.57rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+}
+
+.imprint {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.imprint span:first-child {
+  max-width: 75%;
+}
+
+.motif {
+  position: absolute;
+  inset: 8%;
+  pointer-events: none;
+}
+
+.double-rule {
+  background:
+    linear-gradient(var(--stamp-color), var(--stamp-color)) 50% 3% / 100% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) 50% 6% / 100% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) 50% 94% / 100% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) 50% 97% / 100% 1px
+      no-repeat;
+  opacity: 0.65;
+}
+
+.centered-dot::before {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--stamp-color);
+  border-radius: 50%;
+  box-shadow:
+    -11px 0 0 -2px var(--stamp-color),
+    11px 0 0 -2px var(--stamp-color);
+  content: '';
+  opacity: 0.72;
+  transform: translate(-50%, -50%);
+}
+
+.corner-rules {
+  background:
+    linear-gradient(var(--stamp-color), var(--stamp-color)) top left / 28% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) top left / 1px 14%
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) top right / 28% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) top right / 1px 14%
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) bottom left / 28% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) bottom left / 1px 14%
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) bottom right / 28% 1px
+      no-repeat,
+    linear-gradient(var(--stamp-color), var(--stamp-color)) bottom right / 1px 14%
+      no-repeat;
+  opacity: 0.62;
+}
+
+.none {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .uploadedTitle {
+    font-size: 0.82rem;
+  }
+
+  .title {
+    font-size: 1.02rem;
+  }
+
+  .subtitle {
+    font-size: 0.48rem;
+  }
+}

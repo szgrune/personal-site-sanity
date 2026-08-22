@@ -1,0 +1,176 @@
+.manuscript {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(145.2px, 13.2vw, 191.4px);
+  height: clamp(101.2px, 9.35vw, 132px);
+  /* The sheet is always cream, so its text can't follow the theme's ink. */
+  color: var(--stamp-on-light);
+  scroll-snap-align: start;
+  text-decoration: none;
+  transition:
+    transform 180ms ease-out,
+    filter 180ms ease-out;
+}
+
+.manuscript::after {
+  position: absolute;
+  z-index: -1;
+  right: -8%;
+  bottom: -8px;
+  left: -8%;
+  height: 17px;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(25 14 8 / 0.5) 0%,
+    rgb(25 14 8 / 0.14) 52%,
+    transparent 76%
+  );
+  content: '';
+  filter: blur(2px);
+}
+
+.comingSoon {
+  cursor: default;
+}
+
+.comingSoonMessage {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  padding: 5px 8px;
+  border: 1px solid var(--rule);
+  background: rgb(255 255 255 / 0.94);
+  color: var(--stamp-on-light);
+  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  text-transform: uppercase;
+  transform: translate(-50%, 4px);
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+  white-space: nowrap;
+}
+
+.sheet {
+  position: absolute;
+  inset: var(--sheet-top) var(--sheet-right) var(--sheet-bottom)
+    var(--sheet-left);
+  display: block;
+  overflow: hidden;
+  padding: 17% 12% 10%;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 8%,
+      rgb(158 75 60 / 0.2) 8% calc(8% + 1px),
+      transparent calc(8% + 1px)
+    ),
+    var(--ms-paper);
+  border: 1px solid var(--ms-edge);
+  box-shadow:
+    1px 2px 0 rgb(92 73 47 / 0.12),
+    3px 5px 8px rgb(0 0 0 / 0.1);
+  transform: rotate(var(--sheet-lean));
+  transform-origin: center bottom;
+  transition: transform 180ms ease-out;
+}
+
+.topSheet {
+  display: flex;
+  flex-direction: column;
+}
+
+.status {
+  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: 0.65rem;
+  font-family: var(--font-deaetna), serif;
+  font-size: 0.96rem;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.rules {
+  display: grid;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.rules i {
+  display: block;
+  height: 1px;
+  background: #cfc9bb;
+}
+
+.rules i:nth-child(2) {
+  width: 91%;
+}
+
+.rules i:nth-child(3) {
+  width: 95%;
+}
+
+.rules i:nth-child(4) {
+  width: 72%;
+}
+
+.manuscript:hover,
+.manuscript:focus-visible {
+  z-index: 3;
+  filter: drop-shadow(0 10px 7px rgb(0 0 0 / 0.18));
+  transform: translateY(-6px);
+}
+
+.manuscript:hover .sheet,
+.manuscript:focus-visible .sheet {
+  transform: rotate(0deg);
+}
+
+.comingSoon:hover .comingSoonMessage,
+.comingSoon:focus-visible .comingSoonMessage {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.manuscript:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 0.84rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manuscript,
+  .sheet,
+  .comingSoonMessage {
+    transition: none;
+  }
+
+  .sheet {
+    transform: none;
+  }
+
+  .manuscript:hover,
+  .manuscript:focus-visible {
+    filter: none;
+    transform: none;
+  }
+}

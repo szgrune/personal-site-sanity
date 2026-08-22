@@ -1,0 +1,48 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  width: min(calc(100% - 48px), 44rem);
+  align-content: center;
+  justify-items: start;
+  margin: 0 auto;
+}
+
+.code {
+  margin: 0 0 1rem;
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.page h1 {
+  margin: 0;
+  font-family: var(--font-deaetna), serif;
+  font-size: clamp(2.25rem, 7vw, 5rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.page p:not(.code) {
+  max-width: 42rem;
+  margin: 1.4rem 0 0;
+  color: var(--ink-muted);
+  line-height: 1.7;
+}
+
+.page a {
+  margin-top: 2rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.page a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 5px;
+}

@@ -458,3 +458,20 @@ h3 > a {
     flex-direction: column;
   }
 }
+
+/* ------------------------------------------------------- */
+/* MassDOT shelf embed (/massdot)                          */
+/* ------------------------------------------------------- */
+
+/* The frame sizes itself to the space under the header, so the .App wrapper's
+   usual vertical breathing room would only push it below the fold. */
+.App:has(.shelf-embed) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.shelf-embed {
+  display: block;
+  width: 100%;
+  border: 0;
+}
