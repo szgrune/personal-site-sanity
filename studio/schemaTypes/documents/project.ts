@@ -149,11 +149,11 @@ export const project = defineType({
       type: 'string',
       initialValue: 'cover',
       description:
-        '"Contain on black" shows the whole image on a black background (used for logo cards)',
+        '"Contain on blank background" shows the whole image on the page background — white in light mode, black in dark mode (used for logo cards)',
       options: {
         list: [
           {title: 'Fill the card (crop)', value: 'cover'},
-          {title: 'Contain on black background', value: 'contain'},
+          {title: 'Contain on blank background', value: 'contain'},
         ],
         layout: 'radio',
       },

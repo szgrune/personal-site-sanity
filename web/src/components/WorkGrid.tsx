@@ -240,7 +240,16 @@ function CardMediaBlock({
   if (project.cardImageFit === "contain") {
     return (
       <CardMedia
-        sx={{ objectFit: "contain", height: 200, borderRadius: 0, backgroundColor: "black", backgroundSize: "contain", backgroundRepeat: "no-repeat" }}
+        sx={{
+          objectFit: "contain",
+          height: 200,
+          borderRadius: 0,
+          // Blank background: paper in light mode, ink in dark, so a contained
+          // logo sits on the page color rather than a fixed black plate.
+          backgroundColor: (theme) => theme.palette.background.default,
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+        }}
         image={sizedImageUrl(project.cardImageUrl, { width: CARD_IMAGE_WIDTH })}
       />
     );
