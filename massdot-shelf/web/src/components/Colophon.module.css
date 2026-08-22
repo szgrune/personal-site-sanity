@@ -1,0 +1,31 @@
+.colophon {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 24px 0 22px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.colophon p {
+  margin: 0;
+}
+
+.colophon nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.colophon a {
+  text-underline-offset: 0.22em;
+}
+
+@media (max-width: 600px) {
+  .colophon {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,120 @@
+.header {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) minmax(0, auto) minmax(7rem, 1fr);
+  align-items: center;
+  height: 52px;
+  padding: 0 22px;
+  background: rgb(255 255 255 / 0.94);
+  border-bottom: 1px solid var(--rule);
+  backdrop-filter: blur(8px);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.back {
+  justify-self: start;
+  text-decoration: none;
+}
+
+.projectTitle {
+  overflow: hidden;
+  color: var(--ink-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.back:focus-visible,
+.arrow:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.controls {
+  pointer-events: none;
+}
+
+.arrow {
+  position: absolute;
+  z-index: 15;
+  top: calc(50% + 26px);
+  display: grid;
+  width: 46px;
+  height: 72px;
+  padding: 0;
+  place-items: center;
+  background: rgb(255 255 255 / 0.86);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-noto-sans), sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+  pointer-events: auto;
+  transform: translateY(-50%);
+}
+
+.previous {
+  left: 0;
+  border-left: 0;
+}
+
+.next {
+  right: 0;
+  border-right: 0;
+}
+
+.arrow:disabled {
+  color: var(--rule);
+  cursor: default;
+}
+
+@media (max-width: 899px) {
+  .header {
+    grid-template-columns: 1fr auto;
+    height: 48px;
+    padding: 0 14px;
+  }
+
+  .projectTitle {
+    display: none;
+  }
+
+  .controls {
+    position: absolute;
+    z-index: 20;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 56px;
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+    pointer-events: auto;
+  }
+
+  .arrow {
+    position: static;
+    width: auto;
+    height: 56px;
+    background: transparent;
+    border: 0;
+    transform: none;
+  }
+
+  .arrow + .arrow {
+    border-left: 1px solid var(--rule);
+  }
+}

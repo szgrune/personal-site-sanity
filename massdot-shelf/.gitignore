@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+dist/
+.sanity/
+*.tsbuildinfo
+playwright-report/
+test-results/
+coverage/
+.DS_Store
+
+# Local values only; no secrets are used in this project.
+.env.local
+.vercel

@@ -1,0 +1,87 @@
+.shelf {
+  position: relative;
+  min-width: 0;
+}
+
+.itemRow {
+  display: flex;
+  align-items: flex-end;
+  height: 226px;
+  gap: clamp(10px, 1.5vw, 20px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 18px 20px 0;
+  scrollbar-color: var(--rule) transparent;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.itemRow::-webkit-scrollbar {
+  height: 5px;
+}
+
+.itemRow::-webkit-scrollbar-thumb {
+  background: var(--rule);
+}
+
+.label {
+  position: absolute;
+  z-index: 3;
+  top: 14px;
+  right: 20px;
+  max-width: min(46%, 32rem);
+  text-align: right;
+}
+
+.labelLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
+
+.label h2 {
+  margin: 0;
+  font-family: var(--font-deaetna), serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.labelLine span {
+  color: var(--ink-muted);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.label p {
+  margin: 0.28rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 600px) {
+  .itemRow {
+    width: 100%;
+    height: 230px;
+    padding: 62px 14px 0;
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: 14px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .itemRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .label {
+    top: 11px;
+    right: 13px;
+    max-width: calc(100% - 26px);
+  }
+}

@@ -1,0 +1,53 @@
+.root {
+  line-height: 1.7;
+}
+
+.root > :first-child {
+  margin-top: 0;
+}
+
+.root > :last-child {
+  margin-bottom: 0;
+}
+
+.root p {
+  margin: 0 0 1em;
+}
+
+.root h4,
+.root h5 {
+  margin: 1.6em 0 0.55em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.root h4 {
+  font-size: 1rem;
+}
+
+.root h5 {
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.root ul,
+.root ol {
+  margin: 0 0 1em;
+  padding-left: 1.35em;
+}
+
+.root li {
+  margin: 0.35em 0;
+}
+
+.root a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.root a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

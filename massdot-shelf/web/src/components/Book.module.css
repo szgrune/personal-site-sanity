@@ -1,0 +1,113 @@
+.book {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(103.4px, 9.9vw, 138.6px);
+  aspect-ratio: 2 / 3;
+  border-radius: 2px;
+  color: inherit;
+  scroll-snap-align: start;
+  text-decoration: none;
+  transform: rotate(var(--lean));
+  transform-origin: center bottom;
+  transition:
+    transform 180ms ease-out,
+    filter 180ms ease-out;
+}
+
+.book::after {
+  position: absolute;
+  z-index: -1;
+  right: -14%;
+  bottom: -9px;
+  left: -14%;
+  height: 18px;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(25 14 8 / 0.52) 0%,
+    rgb(25 14 8 / 0.18) 48%,
+    transparent 75%
+  );
+  content: '';
+  filter: blur(2px);
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.cover {
+  position: absolute;
+  inset: 0 6px 0 0;
+  display: block;
+  border-radius: 2px 0 0 2px;
+  box-shadow:
+    1px 1px 1px rgb(0 0 0 / 0.28),
+    4px 8px 13px rgb(0 0 0 / 0.2);
+}
+
+.spineFold {
+  position: absolute;
+  z-index: 2;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: 2px 0 0 2px;
+  box-shadow:
+    inset 2px 0 2px rgb(0 0 0 / 0.22),
+    inset -1px 0 0 rgb(255 255 255 / 0.08);
+  pointer-events: none;
+}
+
+.pageBlock {
+  position: absolute;
+  top: 2px;
+  right: -6px;
+  bottom: 2px;
+  width: 6px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(110 94 68 / 0.22) 0,
+      rgb(110 94 68 / 0.22) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(90deg, #cfc5af 0%, #f8f2e7 44%, #d6cbb6 100%);
+  border-right: 1px solid rgb(65 43 27 / 0.35);
+  pointer-events: none;
+}
+
+.book:hover,
+.book:focus-visible {
+  z-index: 3;
+  filter: drop-shadow(0 11px 7px rgb(0 0 0 / 0.2));
+  transform: translateY(-6px) rotate(0deg);
+}
+
+.book:hover::after,
+.book:focus-visible::after {
+  opacity: 0.72;
+  transform: translateY(6px) scaleX(1.08);
+}
+
+.book:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book {
+    transform: none;
+    transition: none;
+  }
+
+  .book::after {
+    transition: none;
+  }
+
+  .book:hover,
+  .book:focus-visible {
+    filter: none;
+    transform: none;
+  }
+}
