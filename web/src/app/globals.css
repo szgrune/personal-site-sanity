@@ -290,8 +290,13 @@ h3 > a {
 /* ------------------------------------------------------- */
 
 /* Both panes are always in the DOM so switching costs nothing; only one is
-   shown at a time. */
-.work-view-pane[hidden] {
+   shown at a time. Which one is CSS's call until someone clicks: the page is
+   prerendered once for every viewport, so the per-breakpoint default (list on
+   desktop, grid on mobile) can't be decided in JS without flashing the wrong
+   pane on phones. A click swaps .work-view--auto for --list / --grid. */
+.work-view--list .work-view-pane--grid,
+.work-view--grid .work-view-pane--list,
+.work-view--auto .work-view-pane--grid {
   display: none;
 }
 
@@ -329,7 +334,8 @@ h3 > a {
   opacity: 0.75;
 }
 
-.view-switch-option.active {
+.view-switch-option.active,
+.work-view--auto .view-switch-option[data-view='list'] {
   opacity: 1;
   text-decoration: underline;
   text-underline-offset: 5px;
@@ -448,6 +454,34 @@ h3 > a {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   opacity: 0.55;
+}
+
+/* Mobile: grid is the default view, and the switcher lines up with the cards'
+   5vw edge rather than the list rows' 1vw one. Desktop is untouched. */
+@media only screen and (max-width: 700px) {
+  .work-view--auto .work-view-pane--grid {
+    display: block;
+  }
+
+  .work-view--auto .work-view-pane--list {
+    display: none;
+  }
+
+  .work-view--auto .view-switch-option[data-view='list'] {
+    opacity: 0.4;
+    text-decoration: none;
+  }
+
+  .work-view--auto .view-switch-option[data-view='grid'] {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+
+  .view-switch {
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
 }
 
 /* Mobile: text only — no preview layer is mounted — with the categories

@@ -2,7 +2,13 @@
 
 // Work page shell: the tagline, the tag filter, the VIEW switcher, and both
 // project views. Both views stay mounted — switching only flips which pane is
-// hidden, so LIST↔GRID is instant, needs no navigation, and never re-fetches.
+// shown, so LIST↔GRID is instant, needs no navigation, and never re-fetches.
+//
+// `view` starts as null, meaning "nobody has chosen yet, follow the
+// breakpoint" — list on desktop, grid on mobile. That default has to be
+// resolved in CSS rather than here: /work is prerendered once and served to
+// every viewport, so picking it in JS would paint the desktop default and then
+// swap it out on phones. Clicking either option sets `view` and pins it.
 
 import React, { useMemo, useRef, useState } from "react";
 import { Typography } from "@mui/material";
@@ -27,7 +33,7 @@ export default function WorkView({
   categories?: string[] | null;
   projects: ProjectCard[];
 }) {
-  const [view, setView] = useState<View>("list");
+  const [view, setView] = useState<View | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const gridRef = useRef<WorkGridHandle>(null);
 
@@ -71,7 +77,7 @@ export default function WorkView({
   };
 
   return (
-    <div>
+    <div className={`work-view work-view--${view ?? "auto"}`}>
       <Typography variant="h5" component="h5" sx={{ textAlign: "center", marginBottom: "5vh" }}>
         {(tagline || "").split("\n").map((line, i, arr) => (
           <React.Fragment key={i}>
@@ -90,6 +96,9 @@ export default function WorkView({
             {i > 0 && <span className="view-switch-rule" aria-hidden="true" />}
             <button
               type="button"
+              // Read by the .work-view--auto rules, which mark whichever option
+              // the breakpoint is showing until an explicit choice is made.
+              data-view={id}
               className={`view-switch-option${view === id ? " active" : ""}`}
               aria-pressed={view === id}
               onClick={() => setView(id)}
@@ -100,10 +109,10 @@ export default function WorkView({
         ))}
       </div>
 
-      <div className="work-view-pane" hidden={view !== "list"}>
+      <div className="work-view-pane work-view-pane--list">
         <WorkList projects={visibleProjects} />
       </div>
-      <div className="work-view-pane" hidden={view !== "grid"}>
+      <div className="work-view-pane work-view-pane--grid">
         <WorkGrid ref={gridRef} projects={projects} />
       </div>
     </div>
