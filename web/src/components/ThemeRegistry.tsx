@@ -63,10 +63,10 @@ export default function ThemeRegistry({
         letterSpacing: "0.05em !important",
       },
       h4: {
-        fontFamily: "Coolvetica, sans-serif",
+        fontFamily: "Archivo, Helvetica Neue, Helvetica, Arial, sans-serif",
       },
       h3: {
-        fontFamily: "Coolvetica, sans-serif",
+        fontFamily: "Archivo, Helvetica Neue, Helvetica, Arial, sans-serif",
       },
       subtitle1: {
         fontFamily: "Folio Book, sans-serif",

@@ -16,7 +16,14 @@ export async function generateMetadata(): Promise<Metadata> {
   // /favicon.ico in public/ when none is set.
   const icon = settings.faviconUrl
     ? {
-        url: sizedImageUrl(settings.faviconUrl, { width: 64, quality: 90 }) ?? settings.faviconUrl,
+        url:
+          sizedImageUrl(settings.faviconUrl, {
+            width: 64,
+            quality: 90,
+            // The MIME type is declared right below, so the delivered format
+            // has to stay the source's.
+            autoFormat: false,
+          }) ?? settings.faviconUrl,
         type: settings.faviconMimeType ?? undefined,
       }
     : { url: "/favicon.ico" };

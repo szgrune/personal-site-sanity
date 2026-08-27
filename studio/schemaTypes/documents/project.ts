@@ -97,6 +97,14 @@ export const project = defineType({
       group: 'card',
     }),
     defineField({
+      name: 'year',
+      title: 'Year',
+      type: 'string',
+      description:
+        'Shown in the YEAR column of the work page list view, e.g. "2024" or "2022–24". Left blank, the column shows a dash.',
+      group: 'card',
+    }),
+    defineField({
       name: 'cardSubtitle',
       title: 'Card Subtitle',
       type: 'array',

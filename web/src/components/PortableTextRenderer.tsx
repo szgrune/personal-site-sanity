@@ -15,7 +15,7 @@ const IMAGE_ROW_WIDTH = 900;
 
 // Renders portable text with the same element/typography mapping the original
 // site got from MuiMarkdown: headings become MUI Typography variants (h3/h4
-// use Coolvetica, h5/h6 use Folio Book via the theme), paragraphs are plain
+// use Archivo, h5/h6 use Folio Book via the theme), paragraphs are plain
 // <p> elements that inherit the body font. Margins/layout come from the
 // .project-page / .about-page CSS in globals.css.
 

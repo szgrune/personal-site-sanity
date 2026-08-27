@@ -3,7 +3,14 @@
 // Work page project card grid, ported from the original Work.js.
 // Card content now comes from Sanity `project` documents.
 
-import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+} from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -13,12 +20,7 @@ import {
   type PortableTextComponents,
 } from "next-sanity";
 
-import TagPills from "./TagPills";
-import { sizedImageUrl } from "@/sanity/imageUrl";
-
-// Cards render at 200px tall in a ~3-up grid; 700px covers retina displays
-// without shipping the full-resolution original.
-const CARD_IMAGE_WIDTH = 700;
+import { sizedImageUrl, CARD_IMAGE_WIDTH } from "@/sanity/imageUrl";
 
 export type ProjectCard = {
   _id: string;
@@ -30,6 +32,7 @@ export type ProjectCard = {
   tags?: string[] | null;
   cardSubtitle?: PortableTextBlock[] | string | null;
   cardDescription?: PortableTextBlock[] | string | null;
+  year?: string | null;
   cardMediaType?: "image" | "animatedGif" | "video" | null;
   cardImageFit?: "cover" | "contain" | null;
   comingSoon?: boolean | null;
@@ -203,7 +206,11 @@ function CardRichText({ value }: { value: ProjectCard["cardSubtitle"] }) {
 function CardText({ project }: { project: ProjectCard }) {
   return (
     <Box sx={{ padding: "16px 24px 24px 24px" }}>
-      <Typography variant="h4" component="div">
+      {/* responsiveFontSizes() gives h4 a per-breakpoint size (1.56–2.02rem),
+          and those media queries outrank a plain sx value — hence the
+          !important, same as the theme's h5. Scoped to the card so h4 section
+          headings on project pages keep their own scale. */}
+      <Typography variant="h4" component="div" sx={{ fontSize: "1.5rem !important" }}>
         {project.title}
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" component="div">
@@ -351,36 +358,21 @@ function LinkedCard({ project }: { project: ProjectCard }) {
 
 const EXIT_MS = 300;
 
+// The list view owns the tag selection, so the grid takes it as a prop and
+// exposes prepareFilterChange(): the parent calls it synchronously with the
+// next selection *before* setting state, which is when the FLIP animation
+// below has to measure where the surviving cards currently sit.
+export type WorkGridHandle = {
+  prepareFilterChange: (nextSelected: string[]) => void;
+};
+
 export default function WorkGrid({
-  tagline,
-  categories,
   projects,
+  ref,
 }: {
-  tagline?: string | null;
-  categories?: string[] | null;
   projects: ProjectCard[];
+  ref?: React.Ref<WorkGridHandle>;
 }) {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // Pills: only tags that at least one project actually has, ordered by the
-  // CMS base-category list first, then any extra tags in project order — so
-  // entering a brand new tag on a project creates a new pill.
-  const allTags = useMemo(() => {
-    const usedTags = new Set<string>();
-    for (const project of projects) {
-      for (const tag of project.tags ?? []) {
-        usedTags.add(tag);
-      }
-    }
-    const ordered = (categories ?? []).filter((tag) => usedTags.has(tag));
-    for (const project of projects) {
-      for (const tag of project.tags ?? []) {
-        if (!ordered.includes(tag)) ordered.push(tag);
-      }
-    }
-    return ordered;
-  }, [categories, projects]);
-
   // --- Filtering with FLIP layout animation -------------------------------
   // Exiting cards fade/scale out in place (EXIT_MS), then leave the layout;
   // at that moment the surviving cards are translated from their old grid
@@ -416,16 +408,12 @@ export default function WorkGrid({
     firstPositions.current = positions;
   };
 
-  const toggleTag = (tag: string) => {
-    const nextSelected = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag];
+  const prepareFilterChange = (nextSelected: string[]) => {
     const target = computeVisibleIds(nextSelected);
 
     // "First" snapshot before entering cards join the layout
     capturePositions();
 
-    setSelectedTags(nextSelected);
     setEnteringIds(new Set([...target].filter((id) => !renderedIds.has(id) || exitingIds.has(id))));
     const nextRendered = new Set([...renderedIds, ...target]);
     setRenderedIds(nextRendered);
@@ -441,6 +429,10 @@ export default function WorkGrid({
     }, EXIT_MS);
     enterTimer.current = setTimeout(() => setEnteringIds(new Set()), EXIT_MS + 50);
   };
+
+  // No dependency list: the handle is rebuilt each commit so the closure the
+  // parent calls always sees the current renderedIds/exitingIds.
+  useImperativeHandle(ref, () => ({ prepareFilterChange }));
 
   useEffect(
     () => () => {
@@ -472,15 +464,6 @@ export default function WorkGrid({
 
   return (
     <div>
-      <Typography variant="h5" component="h5" sx={{ textAlign: "center", marginBottom: "5vh" }}>
-        {(tagline || "").split("\n").map((line, i, arr) => (
-          <React.Fragment key={i}>
-            {line}
-            {i < arr.length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      </Typography>
-      <TagPills tags={allTags} selected={selectedTags} onToggle={toggleTag} />
       <div
         style={{
           display: "flex",

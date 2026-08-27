@@ -31,6 +31,7 @@ const projectCardFields = /* groq */ `
   externalUrl,
   openInNewTab,
   tags,
+  year,
   cardSubtitle,
   cardDescription,
   cardMediaType,
