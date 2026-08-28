@@ -485,7 +485,9 @@ h3 > a {
 }
 
 /* Mobile: text only — no preview layer is mounted — with the categories
-   dropped onto a second line under the title. */
+   dropped onto a second line under the title. Rows are inset 5vw to line up
+   with the VIEW switcher, which sits at the cards' edge on mobile; the rules
+   themselves still run the full width. */
 @media only screen and (max-width: 700px) {
   .work-list-head,
   .work-list-row {
@@ -494,6 +496,8 @@ h3 > a {
       'year title'
       '.    cats';
     gap: 2px 14px;
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
 
   .wl-year {
