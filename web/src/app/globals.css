@@ -431,8 +431,10 @@ h3 > a {
 }
 
 /* Dim the rest of the list while a row is hovered, so the hovered title reads
-   clearly against its image. */
-.work-list-rows:hover .work-list-row:not(:hover) {
+   clearly against its image. Keyed on :has() rather than .work-list-rows:hover
+   so it fires only for a real row — hovering the YEAR/TITLE/CATEGORIES header
+   or the container's own padding no longer dims the list. */
+.work-list-rows:has(.work-list-row:hover) .work-list-row:not(:hover) {
   opacity: 0.45;
 }
 
@@ -487,8 +489,23 @@ h3 > a {
 /* Mobile: text only — no preview layer is mounted — with the categories
    dropped onto a second line under the title. Rows are inset 5vw to line up
    with the VIEW switcher, which sits at the cards' edge on mobile; the rules
-   themselves still run the full width. */
+   themselves still run the full width.
+
+   Nothing about a row fades here: there is no pointer to hover with, and a tap
+   leaves :hover stuck on mobile browsers, which would dim the rest of the list
+   until you tapped elsewhere. Rows sit at opacity 1 with no transition and no
+   entrance animation. */
 @media only screen and (max-width: 700px) {
+  .work-list-rows {
+    animation: none;
+  }
+
+  .work-list .work-list-row,
+  .work-list-rows:has(.work-list-row:hover) .work-list-row:not(:hover) {
+    opacity: 1;
+    transition: none;
+  }
+
   .work-list-head,
   .work-list-row {
     grid-template-columns: 56px minmax(0, 1fr);
